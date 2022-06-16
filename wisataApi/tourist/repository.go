@@ -94,7 +94,7 @@ func (r *repository) FindByID(ID int) (TouristSite, error) {
 func (r *repository) FindAllGallery(touristid int) ([]Gallery, error) {
 	var tourist []Gallery
 
-	err := r.db.Find(&tourist).Error
+	err := r.db.Where("tourist_id = ?", touristid).Find(&tourist).Error
 	if err != nil {
 		return tourist, err
 	}

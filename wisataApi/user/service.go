@@ -13,7 +13,9 @@ type Service interface {
 	IsEmailAvailable(input CheckEmailInput) (bool, error)
 	SaveAvatar(ID int, fileLocation string) (User, error)
 	GetUserByID(ID int) (User, error)
+	Delete(ID int) (User, error)
 	GetAllUsers() ([]User, error)
+	GetAllUsersByadmin() ([]User, error)
 	UpdateUser(input FormUpdateUserInput) (User, error)
 	Profile(input Profile) (User, error)
 }
@@ -125,8 +127,26 @@ func (s *service) GetUserByID(ID int) (User, error) {
 	return user, nil
 }
 
+func (s *service) Delete(ID int) (User, error) {
+	user, err := s.repository.Delete(ID)
+	if err != nil {
+		return user, err
+	}
+
+	return user, nil
+}
+
 func (s *service) GetAllUsers() ([]User, error) {
 	users, err := s.repository.FindAll()
+	if err != nil {
+		return users, err
+	}
+
+	return users, nil
+}
+
+func (s *service) GetAllUsersByadmin() ([]User, error) {
+	users, err := s.repository.FindAllAdmin()
 	if err != nil {
 		return users, err
 	}
@@ -142,7 +162,7 @@ func (s *service) UpdateUser(input FormUpdateUserInput) (User, error) {
 
 	user.Name = input.Name
 	user.Email = input.Email
-	// user.Occupation = input.Occupation
+	user.Phone = input.Phone
 
 	updatedUser, err := s.repository.Update(user)
 	if err != nil {

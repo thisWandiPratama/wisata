@@ -4,6 +4,7 @@ import "fmt"
 
 type Service interface {
 	FindAll() ([]TouristSite, error)
+	FindByID(id int) (TouristSite, error)
 	Search(name string) ([]TouristSite, error)
 	FindAllByCategory(category_id int) ([]TouristSite, error)
 	Save(input CreateTouristInput) (TouristSite, error)
@@ -24,6 +25,15 @@ func NewService(repository Repository) *service {
 
 func (s *service) FindAll() ([]TouristSite, error) {
 	tourists, err := s.repository.FindAll()
+	if err != nil {
+		return tourists, err
+	}
+
+	return tourists, nil
+}
+
+func (s *service) FindByID(id int) (TouristSite, error) {
+	tourists, err := s.repository.FindByID(id)
 	if err != nil {
 		return tourists, err
 	}

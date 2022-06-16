@@ -12,6 +12,7 @@ import (
 	"wisataapi/itinerary"
 	"wisataapi/tourist"
 	"wisataapi/user"
+	webHandler "wisataapi/web/handler"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-contrib/cors"
@@ -46,6 +47,14 @@ func main() {
 	categoryHandler := handler.NewCampaignHandler(categoryService)
 	touristHandler := handler.NewTouristHandler(touristService)
 	itineraryHandler := handler.NewItineraryHandler(itineraryService)
+
+	// web
+	sessionWebHandler := webHandler.NewSessionHandler(userService)
+	userWebHandler := webHandler.NewUserHandler(userService)
+	categoryWebHandler := webHandler.NewCategoryHandler(categoryService)
+	itineraryWebHandler := webHandler.NewItineraryHandler(itineraryService, userService)
+	dashboardWebHandler := webHandler.NewDashboardHandler(itineraryService, userService, categoryService, touristService)
+	touristWebHandler := webHandler.NewTouristHandler(touristService, categoryService)
 
 	router := gin.Default()
 	router.Use(cors.Default())
@@ -98,6 +107,44 @@ func main() {
 	api.POST("/add_timeline", itineraryHandler.SaveTimeline)
 	api.PUT("/update_timeline", itineraryHandler.UpdateTimeline)
 	api.POST("/delete_timeline", itineraryHandler.DeleteTimeline)
+
+	// web route
+	router.GET("/", sessionWebHandler.New)
+	router.POST("/session", sessionWebHandler.Create)
+	router.GET("/logout", sessionWebHandler.Destroy)
+	// user
+	router.GET("/users", authAdminMiddleware(), userWebHandler.Index)
+	router.GET("/users/new", userWebHandler.New)
+	router.POST("/users", userWebHandler.Create)
+	router.GET("/users/delete/:id", userWebHandler.Delete)
+	router.GET("/users/edit/:id", userWebHandler.Edit)
+	router.POST("/users/update/:id", authAdminMiddleware(), userWebHandler.Update)
+	router.GET("/users/avatar/:id", authAdminMiddleware(), userWebHandler.NewAvatar)
+	router.POST("/users/avatar/:id", authAdminMiddleware(), userWebHandler.CreateAvatar)
+	// categori
+	router.GET("/categorys", authAdminMiddleware(), categoryWebHandler.Index)
+	router.GET("/categorys/new", categoryWebHandler.New)
+	router.POST("/categorys", categoryWebHandler.Create)
+	router.GET("/categorys/edit/:id", categoryWebHandler.Edit)
+	router.POST("/categorys/update/:id", authAdminMiddleware(), categoryWebHandler.Update)
+	router.GET("/categorys/delete/:id", categoryWebHandler.Delete)
+
+	// Tourist
+	router.GET("/tourists", authAdminMiddleware(), touristWebHandler.Index)
+	router.GET("/tourists/new", touristWebHandler.New)
+	router.GET("/tourists/detail/:id", touristWebHandler.Detail)
+	router.POST("/tourists", touristWebHandler.Create)
+	router.GET("/tourists/newgallery/:id", touristWebHandler.NewGallery)
+	router.POST("/tourists/gallery/:id", touristWebHandler.Gallery)
+	router.GET("/tourists/edit/:id", touristWebHandler.Edit)
+	router.POST("/tourists/update/:id", touristWebHandler.Update)
+	router.GET("/tourists/delete/:id", touristWebHandler.Delete)
+
+	// itinerary
+	router.GET("/itinerarys", itineraryWebHandler.Index)
+	router.GET("/itinerarys/detail/:id", itineraryWebHandler.Detail)
+	router.GET("/dashboard", dashboardWebHandler.Index)
+
 	router.Run()
 }
 
@@ -152,7 +199,7 @@ func authAdminMiddleware() gin.HandlerFunc {
 		userIDSession := session.Get("userID")
 
 		if userIDSession == nil {
-			c.Redirect(http.StatusFound, "/login")
+			c.Redirect(http.StatusFound, "/")
 			return
 		}
 	}

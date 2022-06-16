@@ -1,0 +1,31 @@
+{{ define "content" }}
+<h2 class="mb-4">List of Itinerary</h2>
+<div class="card mb-4">
+    <div class="card-body">
+        <table class="table mb-0">
+            <thead class="thead-light">
+                <tr>
+                    <th>Initial Local</th>
+                    <th>Start Day</th>
+                    <th>End Day</th>
+                    <th>Start Time</th>
+                    <th>End Time</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {{ range .itinerarys }}
+                <tr>
+                    <td>{{ .InitialLocal }}</td>
+                    <td>{{ .StartDay }}</td>
+                    <td>{{ .EndDay }}</td>
+                    <td>{{ .StartTime }}</td>
+                    <td>{{ .EndTime }}</td>
+                    <td><a href="/itinerarys/detail/{{ .ID }}"><i class="fa fa-search"></i></a></td>
+                </tr>
+                {{ end }}
+            </tbody>
+        </table>
+    </div>
+</div>
+{{ end }}

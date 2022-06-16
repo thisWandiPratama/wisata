@@ -1,0 +1,43 @@
+{{ define "content" }}
+<h2 class="mb-4">Details Tourist</h2>
+
+{{ if .Error }}
+<div class="alert alert-danger">
+    {{ .Error }}
+</div>
+{{ end }}
+
+<div class="card mb-4">
+
+    <div class="card-body">
+        <form action="" method="POST" enctype="multipart/form-data">
+            <h1><a href="{{.website}}">{{.name}}</a></h1>
+            <h6>{{.address}}, Email: {{.email}}, Phone: {{.phone}}. <a
+                    href="https://www.google.com/maps/search/?api=1&query={{.latitude}},{{.longitude}}">Direction</a>
+                </h1>
+                <img class="center" src="http://localhost:8080/{{.image}}" alt="{{.name}}" style="display: block;
+                margin-left: auto;
+                margin-right: auto;
+                width: 50%;">
+                <p style="text-align: justify;">{{.description}}</p>
+                <div style="display: block;
+                margin-left: auto;
+                margin-right: auto;
+                width: 50%;">
+                    <iframe width="560" height="315" src="{{.video}}" title="YouTube video player" frameborder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowfullscreen></iframe>
+                </div>
+
+                <div class="d-flex flex-row align-items-center flex-wrap">
+                    {{ range .gallery }}
+                    <img class="center" src="http://localhost:8080/{{.Avatar}}" alt="" style="display: block;
+                margin-left: auto;
+                margin-right: auto;
+                width: 30%;">
+                    {{end}}
+                </div>
+        </form>
+    </div>
+</div>
+{{ end }}

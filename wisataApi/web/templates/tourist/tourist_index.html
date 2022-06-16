@@ -1,0 +1,40 @@
+{{ define "content" }}
+<h2 class="mb-4">List of Tourist</h2>
+
+<a href="/tourists/new" class="btn btn-primary mb-3"><i class="fa fa-plus"></i> New Tourist</a>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <table class="table mb-0">
+            <thead class="thead-light">
+                <tr>
+                    <th></th>
+                    <th>Name</th>
+                    <th>Address</th>
+                    <th>Latitude</th>
+                    <th>Longitude</th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {{ range .users }}
+                <tr>
+                    <td><img class="img-fluid img-thumbnail" src="{{ .ImagePrimary }}" width="300"></td>
+                    <td>{{ .Name }} </td>
+                    <td>{{ .Address }}</td>
+                    <td>{{ .Latitude }}</td>
+                    <td>{{ .Longitude }}</td>
+                    <td><a href="/tourists/detail/{{ .ID }}"><i class="fa fa-search"></i></a></td>
+                    <td><a href="/tourists/edit/{{ .ID }}"><i class="fa fa-edit"></i></a></td>
+                    <td><a href="/tourists/delete/{{ .ID }}"><i class="fa fa-trash"></i></a></td>
+                    <td><a href="/tourists/newgallery/{{ .ID }}"><i class="fa fa-camera"></i></a></td>
+                </tr>
+                {{ end }}
+            </tbody>
+        </table>
+    </div>
+</div>
+{{ end }}

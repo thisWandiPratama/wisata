@@ -1,0 +1,24 @@
+{{ define "content" }}
+<h2 class="mb-4">Upload Avatar Gallery</h2>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <form action="/tourists/gallery/{{.ID }}" method="post" enctype="multipart/form-data">
+            <div class="form-group">
+                <input type="file" name="avatar" required class="form-control">
+            </div>
+            <div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+        </form>
+        <div class="d-flex flex-row align-items-center flex-wrap" style="margin-top: 50px;">
+            {{ range .gallerys }}
+            <img class="center" src="http://localhost:8080/{{.Avatar}}" alt="" style="display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 30%;">
+            {{end}}
+        </div>
+    </div>
+</div>
+{{ end }}

@@ -1,0 +1,46 @@
+{{ define "content" }}
+<h2 class="mb-4">Dashboard Admin</h2>
+<div class="container">
+    <div class="row">
+        <div class="col-md-4 col-xl-3">
+            <div class="card bg-c-blue order-card">
+                <div class="card-block">
+                    <h6 class="m-b-20">Users</h6>
+                    <h2 class="text-right"><i class="fa fa-user f-left"></i><span>{{.user}}</span></h2>
+                    <p class="m-b-0">Total User Yang Terdaftar<span class="f-right"></span></p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4 col-xl-3">
+            <div class="card bg-c-green order-card">
+                <div class="card-block">
+                    <h6 class="m-b-20">Categorys</h6>
+                    <h2 class="text-right"><i class="fa fa-folder f-left"></i><span>{{.category}}</span></h2>
+                    <p class="m-b-0">Total Kategori Wisata<span class="f-right">351</span></p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4 col-xl-3">
+            <div class="card bg-c-yellow order-card">
+                <div class="card-block">
+                    <h6 class="m-b-20">Tourists</h6>
+                    <h2 class="text-right"><i class="fa fa-map-marker f-left"></i><span>{{.tourist}}</span></h2>
+                    <p class="m-b-0">Total Wisata Yang Terdaftar<span class="f-right"></span></p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4 col-xl-3">
+            <div class="card bg-c-pink order-card">
+                <div class="card-block">
+                    <h6 class="m-b-20">Itinerarys</h6>
+                    <h2 class="text-right"><i class="fa fa-chart-line f-left"></i><span>{{.itinerary}}</span></h2>
+                    <p class="m-b-0">Total Itinerarys<span class="f-right"></span></p>
+                </div>
+            </div>
+        </div>
+	</div>
+</div>
+{{ end }}

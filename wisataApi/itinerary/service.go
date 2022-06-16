@@ -3,6 +3,7 @@ package itinerary
 type Service interface {
 	FindAll() ([]Itinerary, error)
 	FindAllByIDUser(id int) ([]Itinerary, error)
+	FindByIDUser(id int) (Itinerary, error)
 	Save(input CreateItineraryInput) (Itinerary, error)
 	Update(input UpdateItineraryInput) (Itinerary, error)
 	Delete(id int) (Itinerary, error)
@@ -33,6 +34,15 @@ func (s *service) FindAll() ([]Itinerary, error) {
 
 func (s *service) FindAllByIDUser(id int) ([]Itinerary, error) {
 	itinerrays, err := s.repository.FindAllByIDUser(id)
+	if err != nil {
+		return itinerrays, err
+	}
+
+	return itinerrays, nil
+}
+
+func (s *service) FindByIDUser(id int) (Itinerary, error) {
+	itinerrays, err := s.repository.FindByID(id)
 	if err != nil {
 		return itinerrays, err
 	}

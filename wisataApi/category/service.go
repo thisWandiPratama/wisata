@@ -4,6 +4,7 @@ import "fmt"
 
 type Service interface {
 	FindAll() ([]Category, error)
+	FindByID(id int) (Category, error)
 	Save(input CreateCategoryInput) (Category, error)
 	Update(input UpdateCategoryInput) (Category, error)
 	Delete(id int) (Category, error)
@@ -64,4 +65,13 @@ func (s *service) Delete(id int) (Category, error) {
 	}
 
 	return deleteCategory, nil
+}
+
+func (s *service) FindByID(id int) (Category, error) {
+	findCategory, err := s.repository.FindByID(id)
+	if err != nil {
+		return findCategory, err
+	}
+
+	return findCategory, nil
 }

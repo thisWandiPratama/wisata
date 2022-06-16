@@ -1,0 +1,70 @@
+{{ define "content" }}
+<h2 class="mb-4">Details Itinerarys</h2>
+
+{{ if .Error }}
+<div class="alert alert-danger">
+    {{ .Error }}
+</div>
+{{ end }}
+
+<div class="card mb-4">
+
+    <div class="card-body">
+        <form action="" method="POST" enctype="multipart/form-data">
+            <div class="d-flex flex-column">
+                <label for="categoryid">By User:</label>
+                <input type="text" value="{{.name}}" disabled>
+            </div>
+
+            <div class="d-flex flex-column">
+                <label for="categoryid">Lokasi Titik Awal:</label>
+                <input type="text" value="{{.initiallocal}}" disabled>
+            </div>
+
+            <div class="d-flex flex-column">
+                <label for="categoryid">Start Day:</label>
+                <input type="text" value="{{.startday}}" disabled>
+            </div>
+            <div class="d-flex flex-column">
+                <label for="categoryid">End Day:</label>
+                <input type="text" value="{{.endday}}" disabled>
+            </div>
+
+            <div class="d-flex flex-column">
+                <label for="categoryid">Start Time:</label>
+                <input type="text" value="{{.starttime}}" disabled>
+            </div>
+
+            <div class="d-flex flex-column">
+                <label for="categoryid">End Time:</label>
+                <input type="text" value="{{.endtime}}" disabled>
+            </div>
+
+            <div class="d-flex flex-row align-items-center flex-wrap">
+                <div class="container align-items-center">
+                    <ul class="timeline">
+                        {{ range .timeline }}
+                       <li>
+                          <div class="timeline-time">
+                             <span class="date">{{.Time}}</span>
+                          </div>
+                          <div class="timeline-icon">
+                             <a href="javascript:;">&nbsp;</a>
+                          </div>
+                          <div class="timeline-body">
+                             <div class="timeline-header">
+                                <span class="username">{{.Title}} <small></small></span>
+                             </div>
+                             <div class="timeline-content">
+                                <p style="text-align: justify;">
+                                   {{.Description}}
+                                </p>
+                             </div>
+                          </div>
+                       </li>
+                       {{end}}
+            </div>
+        </form>
+    </div>
+</div>
+{{ end }}
