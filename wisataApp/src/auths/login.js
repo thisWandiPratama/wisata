@@ -29,6 +29,8 @@ class Login extends Component {
                 if (result.meta.status == "success") {
                     this.props.navigation.replace("Home")
                     ToastAndroid.show(result.meta.message, ToastAndroid.LONG)
+                }else{
+                    alert("Email atau Password Anda Salah")
                 }
                 result.meta.status == "error" ? ToastAndroid.show("password atau email anda salah!", ToastAndroid.LONG) : ToastAndroid.show(result.meta.message, ToastAndroid.LONG);
             })

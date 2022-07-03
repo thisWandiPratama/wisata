@@ -18,4 +18,5 @@ type Timeline struct {
 	Description string //name
 	Latitude    string
 	Longitude   string
+	Jarak       int
 }

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { View, Text, Image, TouchableOpacity, ScrollView, TextInput } from 'react-native';
 import { removeToken } from '../serivce/token/token';
-import { getService } from "../serivce/apiTemplate"
+import { getService, postService} from "../serivce/apiTemplate"
 import { baseURLPrimary } from "../serivce/ApiService"
 
 class Home extends Component {
@@ -9,7 +9,8 @@ class Home extends Component {
     super(props);
     this.state = {
       categori: [],
-      search: false
+      search: false,
+      name:""
     };
   }
 
@@ -33,6 +34,14 @@ class Home extends Component {
     this.setState({ categori: categori.data })
   }
 
+  search = async() => {
+    if(this.state.name.length>0){
+      this.props.navigation.navigate("Search",{name:this.state.name})
+    }else{
+      alert("Kolom search wajib diisi")
+    } 
+  }
+
   render() {
     return (
       <View style={{ flex: 1, }}>
@@ -54,8 +63,9 @@ class Home extends Component {
                     width: "80%",
                     marginRight: 10
                   }}
+                  onChangeText={(name) => this.setState({name:name})}
                 />
-                <TouchableOpacity>
+                <TouchableOpacity onPress={() => this.search()}  >
                   <Image style={{ height: 40, width: 40, marginRight: 5 }} source={{ uri: "https://i.ibb.co/dMGhnQk/loupe.png" }} />
                 </TouchableOpacity>
               </View>

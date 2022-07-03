@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
-import { View, Text, TouchableOpacity, Image, TextInput, Modal, ScrollView, ActivityIndicator } from 'react-native';
+import { View, Text, TouchableOpacity, Image, TextInput, Modal, ScrollView, ActivityIndicator, Alert } from 'react-native';
 import DatePicker from 'react-native-date-picker'
+import Geolocation from '@react-native-community/geolocation';
 
 import { postService, getService } from '../serivce/apiTemplate'
 import { getUser } from '../serivce/token/token'
-
+import { getDistance, getPreciseDistance, getSpeed } from 'geolib';
 
 class AddItinerary extends Component {
   constructor(props) {
@@ -16,6 +17,7 @@ class AddItinerary extends Component {
       start_time: new Date(),
       end_time: new Date(),
       itinerary: [],
+      // itinerary: [{ "description": "Pantai Hamadi", "id": 1, "jarak": 15657791, "latitude": "2.5264303", "longitude": "140.6120972", "time": "Day 0", "title": "20:56" }, { "description": "Puncak Harfat", "id": 2, "jarak": 14493458, "latitude": "-1.97346", "longitude": "130.465494", "time": "Day 0", "title": "20:56" }, { "description": "Pantai Harlem", "id": 3, "jarak": 15579576, "latitude": "-2.4620136", "longitude": "140.3677778", "time": "Day 0", "title": "20:56" }],
       user_id: "",
       // modal
       openstartday: false,
@@ -40,12 +42,26 @@ class AddItinerary extends Component {
       description: "",
       latitude: "",
       longitude: "",
-      isloading: true
+      jarakTempuh: "",
+      isloading: true,
+      awal_latitude: "",
+      awal_longitude: ""
     };
   }
 
 
   async componentDidMount() {
+    Geolocation.getCurrentPosition(
+      position => {
+        const initialPosition = JSON.stringify(position);
+        this.setState({
+          awal_latitude: `${JSON.parse(initialPosition).coords.latitude}`,
+          awal_longitude: `${JSON.parse(initialPosition).coords.longitude}`
+        });
+      },
+      error => Alert.alert('Error', "Gagal mendapatkan koordinat lokasi Anda saat ini. Silakan input manual koordinat lokasi titik awal"),
+      { enableHighAccuracy: true, timeout: 20000, },
+    );
     const data = {
       "category_id": this.props.route.params.category_id
     }
@@ -61,18 +77,18 @@ class AddItinerary extends Component {
   }
 
   reload = async (category_id) => {
-    this.setState({isloading:true})
+    this.setState({ isloading: true })
     const data = {
       "category_id": category_id
     }
     const allTouristByCategori = await postService(data, "all_tourist_by_categori")
-    if(allTouristByCategori.data.length>0){
+    if (allTouristByCategori.data.length > 0) {
       this.setState({ allwisata: allTouristByCategori.data })
-    }else{
-      this.setState({ allwisata:[]})
+    } else {
+      this.setState({ allwisata: [] })
     }
     setTimeout(() => {
-      this.setState({isloading:false})
+      this.setState({ isloading: false })
     }, 5000);
   }
 
@@ -85,14 +101,6 @@ class AddItinerary extends Component {
           <View>
             <Text style={{ color: "red", fontWeight: "bold", fontSize: 15 }}>Tourist</Text>
             <Text style={{ color: "#000", fontWeight: "bold", fontSize: 12 }}>{value.description}</Text>
-          </View>
-          <View>
-            <Text style={{ color: "red", fontWeight: "bold", fontSize: 15 }}>Day</Text>
-            <Text style={{ color: "#000", fontWeight: "bold", fontSize: 12 }}>{value.time}</Text>
-          </View>
-          <View>
-            <Text style={{ color: "red", fontWeight: "bold", fontSize: 15 }}>Time</Text>
-            <Text style={{ color: "#000", fontWeight: "bold", fontSize: 12 }}>{value.title}</Text>
           </View>
           <TouchableOpacity onPress={() => this.setState({
             itinerary: this.state.itinerary.filter(items => items.id !== value.id)
@@ -110,37 +118,7 @@ class AddItinerary extends Component {
         <TouchableOpacity disabled={true} key={index} style={{ height: 100, width: "90%", flexDirection: "row", justifyContent: "space-between", }}>
           <View>
             <Text style={{ fontSize: 15, fontWeight: "bold", color: "red" }}>Tourist</Text>
-            <Text style={{ fontSize: 15, fontWeight: "bold", color: "#000" }}>{value.name.length < 22 ? value.name : value.name.slice(0, 18)}...</Text>
-          </View>
-          <View style={{ height: 80, width: 80, marginLeft: 20, alignItems: "center", alignItems: "center" }}>
-            <Text style={{ fontSize: 15, fontWeight: "bold", color: "red" }}>Day</Text>
-            <View style={{ flexDirection: "row" }}>
-              <TouchableOpacity style={{ marginRight: 5, width: 20, height: 20, alignItems: "center" }} TouchableOpacity onPress={() => this.setState({ route: this.state.route - 1 })}>
-                <Text>-</Text>
-              </TouchableOpacity>
-              <Text>{this.state.route}</Text>
-              <TouchableOpacity style={{ marginLeft: 5, width: 20, height: 20, alignItems: "center" }} TouchableOpacity onPress={() => this.setState({ route: this.state.route + 1 })}>
-                <Text>+</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-          <View style={{ marginRight: 10 }}>
-            <Text style={{ fontSize: 15, fontWeight: "bold", color: "red" }}>Time</Text>
-            <DatePicker
-              modal
-              mode={"time"}
-              open={this.state.timedate}
-              date={this.state.time}
-              onConfirm={(date) => {
-                this.setState({ timedate: !this.state.timedate, time: date })
-              }}
-              onCancel={() => {
-                this.setState({ timedate: !this.state.timedate })
-              }}
-            />
-            <TouchableOpacity onPress={() => this.setState({ timedate: !this.state.timedate })}>
-              <Text>{this.state.time.getHours()}:{this.state.time.getMinutes()}</Text>
-            </TouchableOpacity>
+            <Text style={{ fontSize: 15, fontWeight: "bold", color: "#000" }}>{value.name.length > 50 ? value.name.slice(0, 50) + "..." : value.name}</Text>
           </View>
           <View style={{ height: 50, justifyContent: "center" }}>
             <TouchableOpacity style={{
@@ -153,10 +131,11 @@ class AddItinerary extends Component {
                 latitude: `${value.latitude}`,
                 longitude: `${value.longitude}`
               })
-              this.state.itinerary.push(
 
-                { id: this.state.iditinerary + 1, description: `${value.name}`, time: `Day ${this.state.route}`, title: this.state.time.getHours() + ":" + this.state.time.getMinutes(), latitude: `${value.latitude}`, longitude: `${value.longitude}` }
+              this.state.itinerary.push(
+                { id: this.state.iditinerary + 1, description: `${value.name}`, time: `Day ${this.state.route}`, title: this.state.time.getHours() + ":" + this.state.time.getMinutes(), latitude: `${value.latitude}`, longitude: `${value.longitude}`, jarak: this.calculatePreciseDistance(value.latitude, value.longitude) }
               )
+
               this.setState({ modal: !this.state.modal, iditinerary: this.state.iditinerary + 1 })
             }}>
               <Text style={{ fontSize: 15, fontWeight: "bold", color: "red" }}>Add Itinerary</Text>
@@ -191,6 +170,7 @@ class AddItinerary extends Component {
   }
 
   create = async () => {
+    this.state.itinerary
     this.setState({ isloading: true })
     const user_id = await getUser()
     // console.log(this.state.initial_local, this.state.start_day, this.state.end_day, this.state.start_time, this.state.end_time, this.state.itinerary)
@@ -214,20 +194,37 @@ class AddItinerary extends Component {
           timer += 1
           console.log("timer:" + timer + " " + "lenght:" + this.state.itinerary.length)
           const root = this.state.itinerary[i]
+          const timeMenit = this.calculatePreciseDistance(root.latitude, root.longitude).toFixed()
+          const toString =String(timeMenit).slice(0,5)
+          console.log("time menit "+toString)
+          const toJam = toString/60
+          console.log("jam "+toJam.toFixed(1))
+
+          var fixTime = ""
+
+          if (parseInt(timeMenit <60)){
+            fixTime = `${toString} minute`
+          }else{
+            fixTime = `${toJam.toFixed(1)} hours`
+          }
+
           const datasend = {
             "itinerary_id": postItinerary.data.id,
             "time": root.time,
-            "title": root.title,
+            // "time": root.time,
+            "title": fixTime,
             "description": root.description,
             "latitude": root.latitude,
-            "longitude": root.longitude
+            "longitude": root.longitude,
+            "jarak": this.calculatePreciseDistance(root.latitude, root.longitude)
           }
+
           const timeline = await postService(datasend, "add_timeline")
           if (timer == this.state.itinerary.length) {
             setTimeout(() => {
               this.setState({ isloading: false })
               this.props.navigation.navigate("ListItinerary")
-            }, 3000);
+            }, 10000);
           }
         }
 
@@ -241,8 +238,38 @@ class AddItinerary extends Component {
     }
   }
 
+  calculatePreciseDistance = (latitudeTourist, longitudeTourist) => {
+    console.log(this.state.awal_latitude, this.state.awal_longitude)
+    console.log(latitudeTourist, longitudeTourist)
+    var pdis = getPreciseDistance(
+      { latitude: this.state.awal_latitude, longitude: this.state.longitude },
+      { latitude: latitudeTourist, longitude: longitudeTourist },
+    );
+
+    return pdis
+  };
+
+  calculateDuration = (latitudeTourist, longitudeTourist) => {
+    var time = getSpeed(
+      // { latitude: this.state.awal_latitude, longitude: this.state.longitude, time: 1360231200880 },
+      // { latitudeTourist, longitude: longitudeTourist, time: 1360245600880 }
+      { latitude: 51.567294, longitude: 7.38896, time: 1360231200880 },
+      { latitude: 52.54944, longitude: 13.468509, time: 1360245600880 }
+
+    );
+    return time
+  }
+
+  // test = () => {
+  //   var jarak = []
+  //   this.state.itinerary.map((value, index) => {
+  //     // jarak.push(value.jarak)
+  //     // return jarak
+  //     console.log(value.jarak)
+  //   })
+  // }
+
   render() {
-    console.log(this.state.itinerary)
     return (
       <View style={{ flex: 1, }}>
         <ScrollView>
@@ -277,10 +304,70 @@ class AddItinerary extends Component {
                 }}
               />
               <TextInput
-                placeholder='Lokasi Awal'
+                placeholder='Nama Lokasi Awal'
                 style={{ height: 50, width: "90%", borderWidth: 1, borderRadius: 10 }}
                 onChangeText={(awal) => this.setState({ initial_local: awal })}
               />
+            </View>
+            <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: 10 }}>
+              <View style={{ height: 50, width: "40%", flexDirection: "row", alignItems: "center" }}>
+                <Image
+                  source={{
+                    uri: `https://i.ibb.co/Fxz89vd/placeholder.png`
+                  }}
+                  style={{
+                    height: 30,
+                    width: 30,
+                    marginRight: 5
+                  }}
+                />
+                <View
+                  style={{
+                    width: "100%",
+                    marginBottom: 5
+                  }}
+                >
+                  <Text
+                    style={{
+                      fontSize: 10
+                    }}
+                  >Latitude titik awal</Text>
+                  <TextInput
+                    value={this.state.awal_latitude}
+                    placeholder='Latitude Awal'
+                    style={{ height: 50, width: "90%", borderWidth: 1, borderRadius: 10, justifyContent: "center", alignItems: "center" }}
+                    onChangeText={(awal_latitude) => this.setState({ awal_latitude: awal_latitude })}
+                  />
+                </View>
+              </View>
+              <View style={{ height: 50, width: "40%", flexDirection: "row", alignItems: "center", marginRight: 25 }}>
+                <Image
+                  source={{
+                    uri: `https://i.ibb.co/Fxz89vd/placeholder.png`
+                  }}
+                  style={{
+                    height: 30,
+                    width: 30,
+                    marginRight: 5
+                  }}
+                />
+                <View
+                  style={{
+                    width: "100%",
+                    marginBottom: 5
+                  }}
+                >
+                  <Text style={{
+                    fontSize: 10
+                  }}>Longitude titik awal</Text>
+                  <TextInput
+                    value={this.state.awal_longitude}
+                    placeholder='Longitude Awal'
+                    style={{ height: 50, width: "90%", borderWidth: 1, borderRadius: 10, justifyContent: "center", alignItems: "center" }}
+                    onChangeText={(awal_longitude) => this.setState({ awal_longitude: awal_longitude })}
+                  />
+                </View>
+              </View>
             </View>
             <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: 10 }}>
               <View style={{ height: 50, width: "40%", flexDirection: "row", alignItems: "center" }}>
@@ -394,6 +481,9 @@ class AddItinerary extends Component {
                 </TouchableOpacity>
               </View>
             </View>
+            <TouchableOpacity onPress={() => this.calculatePreciseDistance()}>
+              <Text>Test</Text>
+            </TouchableOpacity>
             <View style={{ height: 50, width: "100%", justifyContent: "space-between", flexDirection: "row" }}>
               <Text style={{ textAlign: "center", fontSize: 20, fontWeight: "bold", color: "#000", marginTop: 20 }}> Wisata </Text>
               <TouchableOpacity onPress={() => this.setState({ modal: !this.state.modal })}>
@@ -428,7 +518,7 @@ class AddItinerary extends Component {
               <ScrollView>
                 {this.state.isloading ? <View style={{ flex: 1, alignItems: 'center', justifyContent: "center" }}>
                   <ActivityIndicator size="large" />
-                </View> : this.state.allwisata.length>0?this.listwisata():<Text style={{fontSize:20, textAlign:"center"}}>Tidak ada data</Text>}
+                </View> : this.state.allwisata.length > 0 ? this.listwisata() : <Text style={{ fontSize: 20, textAlign: "center" }}>Tidak ada data</Text>}
               </ScrollView>
             </View>
           </View>

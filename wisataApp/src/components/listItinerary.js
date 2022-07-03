@@ -48,7 +48,7 @@ class ListItinerary extends Component {
   renderItinerary = () => {
     return this.state.itinerary.map((value, index) => {
       return (
-        <TouchableOpacity disabled={true} style={{
+        <TouchableOpacity key={index} disabled={true} style={{
           height: 250,
           width: "100%",
           borderWidth: 1,

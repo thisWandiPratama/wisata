@@ -112,6 +112,7 @@ func main() {
 	router.GET("/", sessionWebHandler.New)
 	router.POST("/session", sessionWebHandler.Create)
 	router.GET("/logout", sessionWebHandler.Destroy)
+
 	// user
 	router.GET("/users", authAdminMiddleware(), userWebHandler.Index)
 	router.GET("/users/new", userWebHandler.New)
@@ -121,6 +122,7 @@ func main() {
 	router.POST("/users/update/:id", authAdminMiddleware(), userWebHandler.Update)
 	router.GET("/users/avatar/:id", authAdminMiddleware(), userWebHandler.NewAvatar)
 	router.POST("/users/avatar/:id", authAdminMiddleware(), userWebHandler.CreateAvatar)
+
 	// categori
 	router.GET("/categorys", authAdminMiddleware(), categoryWebHandler.Index)
 	router.GET("/categorys/new", categoryWebHandler.New)

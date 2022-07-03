@@ -106,6 +106,7 @@ func (s *service) SaveTimeline(input CreateTimelineInput) (Timeline, error) {
 	itinerary.Description = input.Description
 	itinerary.Latitude = input.Latitude
 	itinerary.Longitude = input.Longitude
+	itinerary.Jarak = input.Jarak
 
 	newItinerary, err := s.repository.SaveTimeline(itinerary)
 	if err != nil {
@@ -126,6 +127,7 @@ func (s *service) UpdateTimeline(input UpdateTimelineInput) (Timeline, error) {
 	itinerary.Description = input.Description
 	itinerary.Latitude = input.Latitude
 	itinerary.Longitude = input.Longitude
+	itinerary.Jarak = input.Jarak
 
 	updatedItinerary, err := s.repository.UpdateTimeline(itinerary)
 	if err != nil {

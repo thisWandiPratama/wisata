@@ -10,6 +10,7 @@ import AddItinerary from '../../components/addItinerary'
 import DetailRoute from '../../components/detailRoute'
 import MapItinerary from '../../components/mapItinerary'
 import Profile from '../../components/profile'
+import Search  from '../../components/search';
 
 const Stack = createNativeStackNavigator();
 
@@ -25,6 +26,7 @@ function Routes() {
                 <Stack.Screen name="DetailRoute" component={DetailRoute} />
                 <Stack.Screen name="MapItinerary" component={MapItinerary} />
                 <Stack.Screen name="Profile" component={Profile} />
+                <Stack.Screen name="Search" component={Search} />
             </Stack.Navigator>
     );
 }

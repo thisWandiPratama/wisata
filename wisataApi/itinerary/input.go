@@ -16,6 +16,7 @@ type CreateTimelineInput struct {
 	Description string `json:"description" binding:"required"` //name
 	Latitude    string `json:"latitude" binding:"required"`
 	Longitude   string `json:"longitude" binding:"required"`
+	Jarak       int    `json:"jarak" binding:"required"`
 }
 
 type UpdateTimelineInput struct {
@@ -26,6 +27,7 @@ type UpdateTimelineInput struct {
 	Description string `json:"description" binding:"required"` //name
 	Latitude    string `json:"latitude" binding:"required"`
 	Longitude   string `json:"longitude" binding:"required"`
+	Jarak       int    `json:"jarak" binding:"required"`
 }
 
 type UpdateItineraryInput struct {

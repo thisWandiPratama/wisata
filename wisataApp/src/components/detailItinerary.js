@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, ScrollView,Linking } from 'react-native';
 import Timeline from 'react-native-timeline-flatlist'
 import { postService } from '../serivce/apiTemplate'
 import { WebView } from 'react-native-webview';
+import _ from 'lodash'
 
 class DetailItinerary extends Component {
   constructor(props) {
@@ -18,8 +19,21 @@ class DetailItinerary extends Component {
       "itinerary_id": this.props.route.params.itinerary
     }
     const timeline = await postService(datasend, "timeline_by_itinerary_id")
+    const sort = _.sortBy(timeline.data, [function(o) { return o.title; }]);
+
     this.setState({
-      data: timeline.data
+      data: sort
+    })
+
+    const data = this.state.data.map((obj,index) => {
+        return {
+          ...obj,
+          time: `Route ${index+1}`,
+        };
+    });
+
+    this.setState({
+      data: data
     })
 
   }
@@ -56,7 +70,7 @@ class DetailItinerary extends Component {
 
 
   render() {
-    console.log(this.state.data)
+    console.log(_.sortBy(this.state.data, [function(o) { return o.jarak; }]))
     return (
       <View style={{ flex: 1 }}>
         <View style={{ height: 50, width: "100%", flexDirection: "row", marginTop: 10, alignItems: "center" }}>

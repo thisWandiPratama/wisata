@@ -42,6 +42,7 @@ type TimelineFormatter struct {
 	Description string `json:"description"` //name
 	Latitude    string `json:"latitude"`
 	Longitude   string `json:"longitude"`
+	Jarak       int    `json:"jarak"`
 }
 
 func FormatTimeline(itinerary Timeline) TimelineFormatter {
@@ -53,6 +54,7 @@ func FormatTimeline(itinerary Timeline) TimelineFormatter {
 	ItineraryFormatter.Description = itinerary.Description
 	ItineraryFormatter.Latitude = itinerary.Latitude
 	ItineraryFormatter.Longitude = itinerary.Longitude
+	ItineraryFormatter.Jarak = itinerary.Jarak
 
 	return ItineraryFormatter
 }
