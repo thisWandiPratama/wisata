@@ -9,6 +9,7 @@ import (
 
 type Service interface {
 	RegisterUser(input RegisterUserInput) (User, error)
+	RegisterAdmin(input RegisterUserInput) (User, error)
 	Login(input LoginInput) (User, error)
 	IsEmailAvailable(input CheckEmailInput) (bool, error)
 	SaveAvatar(ID int, fileLocation string) (User, error)
@@ -36,6 +37,40 @@ func (s *service) RegisterUser(input RegisterUserInput) (User, error) {
 	user.Phone = input.Phone
 	user.Avatar = "images/avatar_default.png"
 	user.Role = "user"
+
+	passwordHash, err := bcrypt.GenerateFromPassword([]byte(input.Password), bcrypt.MinCost)
+	if err != nil {
+		return user, err
+	}
+
+	user.Password = string(passwordHash)
+
+	user1, err := s.repository.FindByEmail(input.Email)
+	if err != nil {
+		return user, err
+	}
+
+	if user1.Email == input.Email {
+		fmt.Println("test")
+		return user1, errors.New("email already exists")
+	}
+
+	newUser, err := s.repository.Save(user)
+	if err != nil {
+		return newUser, err
+	}
+	return newUser, nil
+
+}
+
+func (s *service) RegisterAdmin(input RegisterUserInput) (User, error) {
+	fmt.Println(input)
+	user := User{}
+	user.Name = input.Name
+	user.Email = input.Email
+	user.Phone = input.Phone
+	user.Avatar = "images/avatar_default.png"
+	user.Role = "admin"
 
 	passwordHash, err := bcrypt.GenerateFromPassword([]byte(input.Password), bcrypt.MinCost)
 	if err != nil {

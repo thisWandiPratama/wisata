@@ -115,6 +115,8 @@ func main() {
 
 	// user
 	router.GET("/users", authAdminMiddleware(), userWebHandler.Index)
+	router.GET("/register/admin", userWebHandler.NewAdmin)
+	router.POST("/register/admin", userWebHandler.Admin)
 	router.GET("/users/new", userWebHandler.New)
 	router.POST("/users", userWebHandler.Create)
 	router.GET("/users/delete/:id", userWebHandler.Delete)
@@ -143,9 +145,9 @@ func main() {
 	router.GET("/tourists/delete/:id", touristWebHandler.Delete)
 
 	// itinerary
-	router.GET("/itinerarys", itineraryWebHandler.Index)
+	router.GET("/itinerarys", authAdminMiddleware(), itineraryWebHandler.Index)
 	router.GET("/itinerarys/detail/:id", itineraryWebHandler.Detail)
-	router.GET("/dashboard", dashboardWebHandler.Index)
+	router.GET("/dashboard", authAdminMiddleware(), dashboardWebHandler.Index)
 
 	router.Run()
 }

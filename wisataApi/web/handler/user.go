@@ -31,6 +31,10 @@ func (h *userHandler) New(c *gin.Context) {
 	c.HTML(http.StatusOK, "user_new.html", nil)
 }
 
+func (h *userHandler) NewAdmin(c *gin.Context) {
+	c.HTML(http.StatusOK, "admin.html", nil)
+}
+
 func (h *userHandler) Create(c *gin.Context) {
 	name := c.PostForm("name")
 	email := c.PostForm("email")
@@ -50,6 +54,27 @@ func (h *userHandler) Create(c *gin.Context) {
 	}
 
 	c.Redirect(http.StatusFound, "/users")
+}
+
+func (h *userHandler) Admin(c *gin.Context) {
+	name := c.PostForm("name")
+	email := c.PostForm("email")
+	password := c.PostForm("password")
+	phone := c.PostForm("phone")
+
+	registerInput := user.RegisterUserInput{}
+	registerInput.Name = name
+	registerInput.Email = email
+	registerInput.Password = password
+	registerInput.Phone = phone
+
+	_, err := h.userService.RegisterAdmin(registerInput)
+	if err != nil {
+		c.HTML(http.StatusInternalServerError, "error.html", nil)
+		return
+	}
+
+	c.Redirect(http.StatusFound, "/")
 }
 
 func (h *userHandler) Edit(c *gin.Context) {
